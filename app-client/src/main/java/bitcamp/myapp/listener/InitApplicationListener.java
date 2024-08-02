@@ -4,15 +4,20 @@ import bitcamp.context.ApplicationContext;
 import bitcamp.listener.ApplicationListener;
 import bitcamp.menu.MenuGroup;
 import bitcamp.menu.MenuItem;
+
 import bitcamp.myapp.command.MultiGameCommand;
 
 public class InitApplicationListener implements ApplicationListener {
 
   @Override
   public void onStart(ApplicationContext ctx) throws Exception {
-    MenuGroup mainMenu = new MenuGroup("메인 메뉴");
+    MenuGroup mainMenu = new MenuGroup("메인메뉴");
 
-    mainMenu.add(new MenuItem("멀티게임", new MultiGameCommand(ctx)));
+    MenuGroup multiGameMenu = new MenuGroup("멀티게임");
+    multiGameMenu.add(new MenuItem("방만들기", new MultiGameCommand(ctx)));
+    multiGameMenu.add(new MenuItem("참여하기", new MultiGameCommand(ctx)));
+
+    mainMenu.add(multiGameMenu);
 
     mainMenu.setExitMenuTitle("종료");
     ctx.setAttribute("mainMenu", mainMenu);
