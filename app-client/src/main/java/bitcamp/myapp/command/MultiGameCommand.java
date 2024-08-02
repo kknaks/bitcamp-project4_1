@@ -13,10 +13,18 @@ import java.util.List;
 public class MultiGameCommand implements Command {
   ApplicationContext appCtx;
   Socket socket;
-  List<Integer> inputNum;
+  String[][] array;
 
   public MultiGameCommand(ApplicationContext appCtx) {
     this.appCtx = appCtx;
+  }
+
+  public static Integer parseIntOrNull(String s) {
+    try {
+      return Integer.parseInt(s);
+    } catch (NumberFormatException e) {
+      return null;
+    }
   }
 
   @Override
@@ -33,8 +41,16 @@ public class MultiGameCommand implements Command {
         String message = (String) in.readObject();
         System.out.println(message);
 
+        if (message.equals("게임 종료")) {
+          System.out.println("게임이 종료되었습니다.");
+          break;
+        }
+
         if (message.contains("배열")) {
           String[][] arr = (String[][]) in.readObject();
+
+          array = arr;
+
           for (int i = 0; i < arr.length; i++) {
             for (int j = 0; j < arr[i].length; j++) {
               System.out.printf("%s|", arr[i][j]);
@@ -45,27 +61,21 @@ public class MultiGameCommand implements Command {
             }
             System.out.println();
           }
-          inputNum = (List<Integer>) in.readObject();
-          System.out.println(inputNum.toString());
         }
 
         if (message.contains("숫자")) {
           int cell = Prompt.inputInt("숫자를 입력하세요");
-          while (inputNum.contains(cell)) {
+          String value = array[cell / array.length][cell % array.length];
+          int maxSize = array.length * array.length;
+          while (parseIntOrNull(value) == null || cell > maxSize) {
             cell = Prompt.inputInt("숫자를 다시 입력하세요");
+            value = String.valueOf(cell);
           }
+          System.out.println(value);
           out.writeObject(cell);
           out.flush();
         }
       }
-
-      //      int[][] arr = (int[][]) in.readObject();
-      //      for (int i = 0; i < arr.length; i++) {
-      //        for (int j = 0; j < arr[i].length; j++) {
-      //          System.out.println(arr[i][j]);
-      //        }
-      //      }
-
     } catch (Exception e) {
       e.printStackTrace();
     }

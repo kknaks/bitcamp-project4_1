@@ -4,7 +4,6 @@ import bitcamp.context.ApplicationContext;
 import bitcamp.listener.ApplicationListener;
 import bitcamp.listener.InitApplicationListener;
 import bitcamp.vo.Game;
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,7 +17,6 @@ public class ServerApp {
   List<ApplicationListener> listeners = new ArrayList<>();
   ApplicationContext appCtx = new ApplicationContext();
   List<ClientHandler> clients = new ArrayList<>();
-  List<Integer> inputNum = new ArrayList<>();
   Game game = new Game();
 
   // 현재 턴인 플레이어 (0 또는 1을 가짐)
@@ -60,8 +58,7 @@ public class ServerApp {
       e.printStackTrace();
     }
     informStart();
-    //    sendArr();
-
+    return;
   }
 
   synchronized void informStart() {
@@ -90,6 +87,7 @@ public class ServerApp {
     if (game.isGameOver()) {
       clients.get(currentPlayer).sendMessage(currentPlayer + " 님이 졌습니다!");
       clients.get(1 - currentPlayer).sendMessage((1 - currentPlayer) + " 님이 이겼습니다!");
+      broadcastMessage("게임 종료");
     } else {
       sendNextTurnMessage();
     }
@@ -125,9 +123,9 @@ public class ServerApp {
       try {
         while (true) {
           int cell = (int) in.readObject();
-          inputNum.add(cell);
           game.put(cell, player);
           server.handlePlayerInput(player, cell);
+          System.out.println(player + "done");
 
         }
       } catch (Exception e) {
@@ -155,8 +153,6 @@ public class ServerApp {
         try {
           out.writeObject(message);
           out.writeObject(game.getArr());
-          out.writeObject(inputNum);
-          System.out.println(inputNum.toString());
           out.flush();
         } catch (IOException e) {
           e.printStackTrace();
