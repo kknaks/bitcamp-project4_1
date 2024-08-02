@@ -1,0 +1,33 @@
+@startuml
+
+actor Client
+actor Server
+
+Client -> ClientApp: start()
+ClientApp -> MakeRoomCommand: execute()
+MakeRoomCommand -> Server: connect and request create room
+Server -> RoomServerRunnable: handle create room request
+RoomServerRunnable -> ServerApp: create room
+ServerApp -> GameServerRunnable: start game server thread
+
+Client -> JoinGameCommand: execute()
+JoinGameCommand -> Server: connect and request room list
+RoomServerRunnable -> ServerApp: return room list
+ServerApp -> JoinGameCommand: return room list
+JoinGameCommand -> Client: display room list
+Client -> JoinGameCommand: select room and join
+JoinGameCommand -> MultiGameCommand: execute()
+MultiGameCommand -> Server: connect to game server thread
+
+alt Game Loop
+    Client -> Server: send move
+    MultiGameCommand -> GameServerRunnable: send move
+    GameServerRunnable -> Game: process move
+    GameServerRunnable -> MultiGameCommand: send game state
+    MultiGameCommand -> Client: update game state
+end
+
+Client -> ClientApp: end()
+ClientApp -> Server: disconnect
+
+@enduml

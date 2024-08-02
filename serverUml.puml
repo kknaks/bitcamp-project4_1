@@ -1,0 +1,212 @@
+@startuml
+
+' 클라이언트 패키지
+package bitcamp.myapp {
+  class ClientApp {
+    - listeners: List<ApplicationListener>
+    - appCtx: ApplicationContext
+    + main(args: String[]): void
+    - addApplicationListener(listener: ApplicationListener): void
+    - removeApplicationListener(listener: ApplicationListener): void
+    - execute(): void
+  }
+}
+
+package bitcamp.myapp.command {
+  class JoinGameCommand {
+    - appCtx: ApplicationContext
+    + JoinGameCommand(appCtx: ApplicationContext)
+    + execute(menuName: String): void
+  }
+
+  class MultiGameCommand {
+    - appCtx: ApplicationContext
+    - room: Room
+    - array: String[][]
+    + MultiGameCommand(appCtx: ApplicationContext, room: Room)
+    + execute(menuName: String): void
+  }
+
+  class MakeRoomCommand {
+    - appCtx: ApplicationContext
+    + MakeRoomCommand(appCtx: ApplicationContext)
+    + execute(menuName: String): void
+  }
+}
+
+package bitcamp.myapp.listener {
+  class InitApplicationListener {
+    + onStart(ctx: ApplicationContext): void
+    + onShutdown(ctx: ApplicationContext): void
+  }
+}
+
+' 공통 패키지
+package bitcamp.command {
+  interface Command {
+    + execute(menuName: String): void
+  }
+}
+
+package bitcamp.context {
+  class ApplicationContext {
+    - objContainer: Map<String, Object>
+    - mainMenu: MenuGroup
+    + setAttribute(name: String, value: Object): void
+    + getAttribute(name: String): Object
+    + getMainMenu(): MenuGroup
+  }
+}
+
+package bitcamp.listener {
+  interface ApplicationListener {
+    + onStart(ctx: ApplicationContext): void
+    + onShutdown(ctx: ApplicationContext): void
+  }
+}
+
+package bitcamp.menu {
+  abstract class AbstractMenu {
+    - title: String
+    + AbstractMenu(title: String)
+    + equals(o: Object): boolean
+    + hashCode(): int
+    + getTitle(): String
+  }
+
+  class MenuGroup {
+    - parent: MenuGroup
+    - children: ArrayList<Menu>
+    - exitMenuTitle: String
+    + MenuGroup(title: String)
+    + execute(): void
+  }
+
+  class MenuItem {
+    - title: String
+    + MenuItem(title: String)
+    + execute(): void
+  }
+
+  interface Menu {
+    + getTitle(): String
+    + execute(): void
+  }
+}
+
+package bitcamp.util {
+  class Prompt {
+    + input(message: String, args: Object[]): String
+    + inputInt(message: String, args: Object[]): int
+    + close(): void
+    + printHistory(): void
+  }
+}
+
+package bitcamp.vo {
+  class Room {
+    - no: int
+    - port: int
+    - title: String
+    - size: int
+    - count: int
+    - memberCount: int
+    + Room()
+    + setSeqRoomNo(): int
+    + setSeqPort(): int
+    + getNo(): int
+    + getPort(): int
+    + getIp(): String
+    + getTitle(): String
+    + setTitle(title: String): void
+    + getSize(): int
+    + setSize(size: int): void
+    + getCount(): int
+    + setCount(count: int): void
+    + getMemberCount(): int
+  }
+}
+
+' 서버 패키지
+package bitcamp.myapp {
+  class ServerApp {
+    - listeners: List<ApplicationListener>
+    - appCtx: ApplicationContext
+    - rooms: List<Room>
+    + main(args: String[]): void
+    - addApplicationListener(listener: ApplicationListener): void
+    - removeApplicationListener(listener: ApplicationListener): void
+    - execute(): void
+  }
+
+  class RoomServerRunnable {
+    + run(): void
+  }
+
+  class GameServerRunnable {
+    - room: Room
+    - game: Game
+    - clients: List<ClientHandler>
+    - currentPlayer: int
+    + GameServerRunnable(room: Room)
+    + run(): void
+    - informStart(): synchronized void
+    - sendNextTurnMessage(): synchronized void
+    - handlePlayerInput(playerNumber: int, num: int): synchronized void
+    - broadcastMessage(message: Object): void
+  }
+
+  class ClientHandler {
+    - socket: Socket
+    - in: ObjectInputStream
+    - out: ObjectOutputStream
+    - player: int
+    + ClientHandler(clientSocket: Socket, player: int)
+    + run(): void
+    + sendMessage(message: Object): void
+  }
+}
+
+package bitcamp.vo {
+  class Game {
+    - size: int
+    - winCount: int
+    - arr: String[][]
+    - whiteStone: char
+    - blackStone: char
+    - gameOver: boolean
+    + Game(size: int, winCount: int)
+    + isGameOver(): boolean
+    + getArr(): String[][]
+    + put(point: int, player: int): void
+    + bfs(x: int, y: int, stone: String): boolean
+  }
+}
+
+' 클래스 관계
+ClientApp "1" --> "many" ApplicationListener
+ClientApp "1" --> ApplicationContext
+InitApplicationListener --> ApplicationListener
+JoinGameCommand --> ApplicationContext
+JoinGameCommand --> Command
+MultiGameCommand --> ApplicationContext
+MultiGameCommand --> Room
+MultiGameCommand --> Command
+MakeRoomCommand --> ApplicationContext
+MakeRoomCommand --> Command
+ApplicationContext --> MenuGroup
+MenuGroup --> AbstractMenu
+MenuItem --> AbstractMenu
+ServerApp "1" --> "many" ApplicationListener
+ServerApp "1" --> ApplicationContext
+ServerApp "1" --> Room
+RoomServerRunnable --> ServerApp
+GameServerRunnable --> Room
+GameServerRunnable --> Game
+GameServerRunnable --> ClientHandler
+ClientHandler --> Socket
+ClientHandler --> ObjectInputStream
+ClientHandler --> ObjectOutputStream
+ClientHandler --> Player
+
+@enduml
