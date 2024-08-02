@@ -17,6 +17,18 @@ public class JoinGameCommand implements Command {
     this.appCtx = appCtx;
   }
 
+  private static int getAdjustedWidth(String s, int width) {
+    int length = s.length();
+    int nonAsciiCount = 0;
+
+    for (char c : s.toCharArray()) {
+      if (c > 127) {
+        nonAsciiCount++;
+      }
+    }
+    return width - ((2 * nonAsciiCount - 1) / 2);
+  }
+
   @Override
   public void execute(String menuName) {
     try (Socket socket = new Socket("localhost", 8888);
@@ -38,12 +50,15 @@ public class JoinGameCommand implements Command {
       // 방 목록 출력
       System.out.println("현재 생성된 방 목록:");
       for (Room room : rooms) {
-        System.out.printf("방 번호: %d, 방 제목: %s, 포트: %d\n", room.getNo(), room.getTitle(),
-            room.getPort());
+        System.out.println("| 방번호 | 방제목 |  사이즈  |  승리돌  | 현재원 |");
+        System.out.printf("|%6d  |", room.getNo() + 1);
+        System.out.printf("%" + getAdjustedWidth(room.getTitle(), 7) + "s|", room.getTitle());
+        System.out.printf(" %3s*%3s  | %6d   | %4d/2 |\n", room.getSize(), room.getSize(),
+            room.getCount(), room.getMemberCount());
       }
 
       // 사용자로부터 방 번호 입력받기
-      int roomNo = Prompt.inputInt("참여할 방 번호를 입력하세요: ");
+      int roomNo = Prompt.inputInt("참여할 방 번호를 입력하세요: ") - 1;
       Room selectedRoom =
           rooms.stream().filter(room -> room.getNo() == roomNo).findFirst().orElse(null);
 

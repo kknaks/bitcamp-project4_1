@@ -15,6 +15,7 @@ public class Room implements Serializable {
   private String title;
   private int size;
   private int count;
+  private int memberCount = 1;
 
   public Room() {
 
@@ -70,6 +71,10 @@ public class Room implements Serializable {
 
   public void setCount(int count) {
     this.count = count;
+  }
+
+  public int getMemberCount() {
+    return memberCount;
   }
 }
 

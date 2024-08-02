@@ -35,7 +35,6 @@ public class MakeRoomCommand implements Command {
       out.writeObject(room);
 
       System.out.println("방 생성 완료. 게임을 시작합니다.");
-      System.out.println(room.getPort());
       MultiGameCommand multiGameCommand = new MultiGameCommand(appCtx, room);
       multiGameCommand.execute(menuName);
 

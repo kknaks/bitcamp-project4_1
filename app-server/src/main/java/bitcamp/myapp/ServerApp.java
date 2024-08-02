@@ -55,9 +55,7 @@ public class ServerApp {
               out.writeObject(rooms);
             } else if (command.equals("CREATE_ROOM")) {
               Room room = (Room) in.readObject();
-              System.out.println(room.getNo() + "이 추가 되었습니다.");
-              System.out.println(room.getPort() + "이 추가 되었습니다.");
-              System.out.println(room.getTitle() + "이 추가 되었습니다.");
+              System.out.println(room.getNo() + "번 방이 생성 되었습니다.");
               rooms.add(room);
 
               // 방(Room)마다 독립적인 스레드를 실행
@@ -102,6 +100,7 @@ public class ServerApp {
         if (clients.size() == 2) {
           informStart();
         }
+        rooms.remove(room);
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -133,6 +132,7 @@ public class ServerApp {
         clients.get(currentPlayer).sendMessage("Player" + (currentPlayer + 1) + " 님이 졌습니다!");
         clients.get(1 - currentPlayer).sendMessage("Player" + (currentPlayer) + " 님이 이겼습니다!");
         broadcastMessage("게임 종료");
+
       } else {
         sendNextTurnMessage();
       }
@@ -170,7 +170,7 @@ public class ServerApp {
             handlePlayerInput(player, cell);
           }
         } catch (Exception e) {
-          e.printStackTrace();
+          //          e.printStackTrace();
         } finally {
           try {
             in.close();

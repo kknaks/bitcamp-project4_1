@@ -29,15 +29,13 @@ public class MultiGameCommand implements Command {
 
   @Override
   public void execute(String menuName) {
-    System.out.println("포트 번호: " + room.getPort());
-
     try {
       Thread.sleep(2000); // 2초 대기
 
       try (Socket socket = new Socket("localhost", room.getPort());
           ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
           ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
-        System.out.println("서버연결완료");
+        System.out.println("방에 입장 하였습니다.");
         System.out.println("대기중.....");
 
         while (true) {
@@ -71,7 +69,7 @@ public class MultiGameCommand implements Command {
             String value = array[cell / array.length][cell % array.length];
             int maxSize = array.length * array.length;
             while (parseIntOrNull(value) == null || cell > maxSize) {
-              cell = Prompt.inputInt("숫자를 다시 입력하세요");
+              cell = Prompt.inputInt("해당 자리에 돌이 놓여 있습니다.");
               value = String.valueOf(cell);
             }
             System.out.println(value);
