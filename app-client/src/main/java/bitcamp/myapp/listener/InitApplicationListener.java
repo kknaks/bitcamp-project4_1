@@ -5,7 +5,9 @@ import bitcamp.listener.ApplicationListener;
 import bitcamp.menu.MenuGroup;
 import bitcamp.menu.MenuItem;
 
+import bitcamp.myapp.command.JoinGameCommand;
 import bitcamp.myapp.command.MultiGameCommand;
+import bitcamp.myapp.command.MakeRoomCommand;
 
 public class InitApplicationListener implements ApplicationListener {
 
@@ -14,8 +16,8 @@ public class InitApplicationListener implements ApplicationListener {
     MenuGroup mainMenu = new MenuGroup("메인메뉴");
 
     MenuGroup multiGameMenu = new MenuGroup("멀티게임");
-    multiGameMenu.add(new MenuItem("방만들기", new MultiGameCommand(ctx)));
-    multiGameMenu.add(new MenuItem("참여하기", new MultiGameCommand(ctx)));
+    multiGameMenu.add(new MenuItem("방만들기", new MakeRoomCommand(ctx)));
+    multiGameMenu.add(new MenuItem("참여하기", new JoinGameCommand(ctx)));
 
     mainMenu.add(multiGameMenu);
 
