@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import static bitcamp.net.ResponseStatus.MAIN_SERVER_IP;
+
 public class MultiGameCommand implements Command {
   ApplicationContext appCtx;
   Room room;
@@ -32,7 +34,7 @@ public class MultiGameCommand implements Command {
     try {
       Thread.sleep(2000); // 2초 대기
 
-      try (Socket socket = new Socket("localhost", room.getPort());
+      try (Socket socket = new Socket(MAIN_SERVER_IP, room.getPort());
           ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
           ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
         System.out.println("방에 입장 하였습니다.");

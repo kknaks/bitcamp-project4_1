@@ -14,6 +14,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import static bitcamp.net.ResponseStatus.MAIN_SERVER_PORT;
+
 public class ServerApp {
   List<ApplicationListener> listeners = new ArrayList<>();
   ApplicationContext appCtx = new ApplicationContext();
@@ -40,7 +42,7 @@ public class ServerApp {
   class RoomServerRunnable implements Runnable {
     @Override
     public void run() {
-      try (ServerSocket serverSocket = new ServerSocket(8888)) {
+      try (ServerSocket serverSocket = new ServerSocket(MAIN_SERVER_PORT)) {
         System.out.println("룸 서버가 8888 포트에서 시작되었습니다.");
         while (true) {
           try (Socket socket = serverSocket.accept();

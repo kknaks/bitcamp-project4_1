@@ -10,6 +10,9 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
 
+import static bitcamp.net.ResponseStatus.MAIN_SERVER_IP;
+import static bitcamp.net.ResponseStatus.MAIN_SERVER_PORT;
+
 public class JoinGameCommand implements Command {
   ApplicationContext appCtx;
 
@@ -31,7 +34,7 @@ public class JoinGameCommand implements Command {
 
   @Override
   public void execute(String menuName) {
-    try (Socket socket = new Socket("localhost", 8888);
+    try (Socket socket = new Socket(MAIN_SERVER_IP, MAIN_SERVER_PORT);
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
       System.out.println("서버와 연결 되었습니다.");
@@ -58,11 +61,15 @@ public class JoinGameCommand implements Command {
       }
 
       // 사용자로부터 방 번호 입력받기
-      int roomNo = Prompt.inputInt("참여할 방 번호를 입력하세요: ") - 1;
+      int roomNo = Prompt.inputInt("참여할 방 번호를 입력하세요(이전 :0): ") - 1;
+      if (roomNo == -1) {
+        return;
+      }
+
       Room selectedRoom =
           rooms.stream().filter(room -> room.getNo() == roomNo).findFirst().orElse(null);
 
-      if (selectedRoom == null) {
+      if (selectedRoom == null && roomNo != -1) {
         System.out.println("해당 번호의 방이 없습니다.");
         return;
       }

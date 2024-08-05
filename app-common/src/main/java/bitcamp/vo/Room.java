@@ -2,10 +2,12 @@ package bitcamp.vo;
 
 import java.io.Serializable;
 
+import static bitcamp.net.ResponseStatus.MAIN_SERVER_IP;
+
 public class Room implements Serializable {
 
   private static final long serialVersionUID = 1L;
-  private static final String IP = "127.0.0.1";
+  private static final String IP = MAIN_SERVER_IP;
 
   private static int seqRoomNo;
   private static int seqPort = 9000;

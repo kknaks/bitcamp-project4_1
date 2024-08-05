@@ -10,6 +10,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 
+import static bitcamp.net.ResponseStatus.MAIN_SERVER_IP;
+import static bitcamp.net.ResponseStatus.MAIN_SERVER_PORT;
+
+
 public class MakeRoomCommand implements Command {
   ApplicationContext appCtx;
 
@@ -18,7 +22,7 @@ public class MakeRoomCommand implements Command {
   }
 
   public void execute(String menuName) {
-    try (Socket socket = new Socket("localhost", 8888);
+    try (Socket socket = new Socket(MAIN_SERVER_IP, MAIN_SERVER_PORT);
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
       System.out.println("서버와 연결 되었습니다.");
