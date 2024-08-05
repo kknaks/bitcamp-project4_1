@@ -68,13 +68,15 @@ public class MultiGameCommand implements Command {
 
           if (message.contains("숫자")) {
             int cell = Prompt.inputInt("숫자를 입력하세요");
-            String value = array[cell / array.length][cell % array.length];
             int maxSize = array.length * array.length;
+            while (cell > maxSize) {
+              cell = Prompt.inputInt("배열을 초과하였습니다.");
+            }
+            String value = array[cell / array.length][cell % array.length];
             while (parseIntOrNull(value) == null || cell > maxSize) {
               cell = Prompt.inputInt("해당 자리에 돌이 놓여 있습니다.");
               value = String.valueOf(cell);
             }
-            System.out.println(value);
             out.writeObject(cell);
             out.flush();
           }
