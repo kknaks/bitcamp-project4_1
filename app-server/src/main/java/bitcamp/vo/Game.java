@@ -40,12 +40,12 @@ public class Game {
     String stone = String.valueOf(player == 1 ? whiteStone : blackStone);
     arr[input_x][input_y] = stone;
 
-    if (bfs(input_x, input_y, stone)) {
+    if (dfs(input_x, input_y, stone)) {
       gameOver = true;
     }
   }
 
-  public boolean bfs(int x, int y, String stone) {
+  public boolean dfs(int x, int y, String stone) {
     int[][] directions = {{1, 0}, {0, 1}, {1, 1}, {1, -1}};
     for (int[] direction : directions) {
       int count = 1;
